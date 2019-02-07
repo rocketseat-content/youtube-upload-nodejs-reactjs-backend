@@ -27,10 +27,16 @@ PostSchema.pre("remove", function() {
   if (process.env.STORAGE_TYPE === "s3") {
     return s3
       .deleteObject({
-        Bucket: "uploadexample2",
+        Bucket: process.env.BUCKET_NAME,
         Key: this.key
       })
-      .promise();
+      .promise()
+      .then(response => {
+        console.log(response.status);
+      })
+      .catch(response => {
+        console.log(response.status);
+      });
   } else {
     return promisify(fs.unlink)(
       path.resolve(__dirname, "..", "..", "tmp", "uploads", this.key)
